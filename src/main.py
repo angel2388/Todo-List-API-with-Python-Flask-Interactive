@@ -26,12 +26,40 @@ def handle_invalid_usage(error):
     return jsonify(error.to_dict()), error.status_code
 
 # generate sitemap with all your endpoints
-@app.route('/')
-def sitemap():
-    return generate_sitemap(app)
+MUESTRA = []
 
-@app.route('/user', methods=['GET'])
-def handle_hello():
+@app.route('/todos', methods=['POST'])
+def crear_muestra():
+    body = request.get_json()
+
+    nuevaMuestra = {
+        "position": body ["position"],
+        "done": body ["done"],
+        "label": body ["label"]
+    }
+
+    MUESTRA.append(nuevaMuestra)
+    return "crear_muestra"
+
+@app.route('/todos', methods=['GET'])
+def obtener_muestra():
+
+    return jsonify(MUESTRA)
+
+
+@app.route('/todos/<int:position>', methods=['DELETE'])
+def eliminar_muestra(position):
+    resultado = None
+    for usuario in MUESTRA:
+        if usuario ["position"] == position:
+            resultado = usuario
+            break
+
+    if resultado != None:
+        MUESTRA.remove(resultado)    
+
+    return jsonify(MUESTRA)    
+
 
     response_body = {
         "msg": "Hello, this is your GET /user response "
